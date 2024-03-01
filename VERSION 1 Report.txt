@@ -1,0 +1,38 @@
+__________________________________________________________________________________________________
+ Layer (type)                Output Shape                 Param #   Connected to
+==================================================================================================
+ pay_input (InputLayer)      [(None, 6, 1)]               0         []
+
+ bill_amt_input (InputLayer  [(None, 6, 1)]               0         []
+ )
+
+ pay_amt_input (InputLayer)  [(None, 6, 1)]               0         []
+
+ lstm (LSTM)                 (None, 32)                   4352      ['pay_input[0][0]']
+
+ lstm_1 (LSTM)               (None, 32)                   4352      ['bill_amt_input[0][0]']
+
+ lstm_2 (LSTM)               (None, 32)                   4352      ['pay_amt_input[0][0]']
+
+ static_input (InputLayer)   [(None, 5)]                  0         []
+
+ concatenate (Concatenate)   (None, 101)                  0         ['lstm[0][0]',
+                                                                     'lstm_1[0][0]',
+                                                                     'lstm_2[0][0]',
+                                                                     'static_input[0][0]']
+
+ dense (Dense)               (None, 64)                   6528      ['concatenate[0][0]']
+
+ dense_1 (Dense)             (None, 1)                    65        ['dense[0][0]']
+
+==================================================================================================
+Total params: 19649 (76.75 KB)
+Trainable params: 19649 (76.75 KB)
+Non-trainable params: 0 (0.00 Byte)
+
+
+Test Loss: 0.43296271562576294
+Test Accuracy: 0.8182222247123718
+Test Precision: 0.6646341681480408
+Test Recall: 0.33367347717285156
+Test AUC: 0.7715238332748413
