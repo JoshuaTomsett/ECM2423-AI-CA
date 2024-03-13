@@ -1,18 +1,11 @@
-# Test Loss: 0.4874051511287689
-# Test Accuracy: 0.797
-# Test Precision: 0.548
-# Test Recall: 0.51
-# Test AUC: 0.77
-
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
-from sklearn.utils.class_weight import compute_class_weight
 from sklearn.model_selection import train_test_split
 from imblearn.over_sampling import SMOTENC
+from imblearn.under_sampling import RandomUnderSampler
 import keras
-from keras.layers import Input, LSTM, Dense, Dropout, Concatenate, Embedding, Flatten, Bidirectional
+from keras.layers import Input, LSTM, Dense, Concatenate, Embedding, Flatten
 from keras.models import Model
 from keras.metrics import Precision, Recall, AUC
 from keras.regularizers import l2
@@ -40,7 +33,7 @@ X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.
 sm = SMOTENC(categorical_features=categorical_feature_names,random_state=42, sampling_strategy=0.8)
 X_train, y_train = sm.fit_resample(X_train, y_train)
 
-##### Normalization
+##### Normalization and feature splitting
 sc_bill = StandardScaler()
 X_train_bill_amt = sc_bill.fit_transform(X_train[['BILL_AMT1', 'BILL_AMT2', 'BILL_AMT3', 'BILL_AMT4', 'BILL_AMT5', 'BILL_AMT6']])
 X_test_bill_amt = sc_bill.transform(X_test[['BILL_AMT1', 'BILL_AMT2', 'BILL_AMT3', 'BILL_AMT4', 'BILL_AMT5', 'BILL_AMT6']])
@@ -82,9 +75,11 @@ static_input = Input(shape=(2,), name='static')
 sex_input = Input(shape=(1,), name='sex')
 education_input = Input(shape=(1,), name='education')
 marriage_input = Input(shape=(1,), name='marriage')
+
 sex_embedding = Flatten()(Embedding(input_dim=1+1, output_dim=5)(sex_input))
 education_embedding = Flatten()(Embedding(input_dim=6+1, output_dim=5)(education_input))
 marriage_embedding = Flatten()(Embedding(input_dim=3+1, output_dim=5)(marriage_input))
+
 static = Concatenate()([static_input, sex_embedding, education_embedding, marriage_embedding])
 
 ### PAY Features
